@@ -1,0 +1,49 @@
+server:
+  servlet:
+    context-path: /api/baas/v1
+
+spring:
+  main:
+    banner-mode: off # Turn off the spring boot banner
+  datasource:
+    url: jdbc:postgresql://localhost:5432/baas
+    username: spring_boot
+    password: spring_boot
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false # Avoid performance problems and running out of Pool Connection in tha database
+
+logging:
+  level:
+    root: warn # Only show errors or warns
+    # Add logging configs to display SQL statements
+    org:
+      hibernate:
+        SQL: debug # Log SQL statements
+        orm:
+          jdbc:
+            bind: trace # Log values for SQL statements
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  #        exclude: health
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Baas (Banking as a Service)
+    description: Apis de la cual se gestiona una billetera digital
+    version: 1.0.0
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html # default: /swagger-ui/index.html
+  api-docs:
+    path: /api-docs # default: /v3/api-docs

@@ -1,7 +1,8 @@
 package com.lsp.baas.Service;
 
-import com.lsp.baas.Service.Record.CustomerCreate;
-import com.lsp.baas.Service.Record.CustomerResponse;
+import com.lsp.baas.Service.Dto.CustomerCreate;
+import com.lsp.baas.Service.Dto.CustomerResponse;
+import com.lsp.baas.Service.Dto.CustomerUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,9 +14,11 @@ public interface ICustomerService{
 
     CustomerResponse save(CustomerCreate customerCreateDto);
 
-    List<CustomerResponse> findAll();
     Page<CustomerResponse> findAllPage(Pageable pageable);
 
-    Slice<CustomerResponse> findAllSlice(Pageable pageable);
-    Optional<CustomerResponse> findById(Long id);
+    Optional<CustomerResponse> findByCuid(String cuid);
+
+    CustomerResponse update(CustomerUpdate customerUpdate, String cuid);
+
+    CustomerResponse disable(String cuid);
 }

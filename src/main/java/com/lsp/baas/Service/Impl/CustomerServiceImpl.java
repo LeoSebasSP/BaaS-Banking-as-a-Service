@@ -1,18 +1,20 @@
 package com.lsp.baas.Service.Impl;
 
+import com.lsp.baas.Exception.ResourceNotFoundException;
 import com.lsp.baas.Persistence.Entity.Customer;
 import com.lsp.baas.Persistence.Repository.ICustomerRepository;
+import com.lsp.baas.Service.Dto.CustomerUpdate;
 import com.lsp.baas.Service.ICustomerService;
-import com.lsp.baas.Service.Record.CustomerCreate;
-import com.lsp.baas.Service.Record.CustomerResponse;
-import com.lsp.baas.Service.Record.Mapper.CustomerMapper;
+import com.lsp.baas.Service.Dto.CustomerCreate;
+import com.lsp.baas.Service.Dto.CustomerResponse;
+import com.lsp.baas.Service.Dto.Mapper.CustomerMapper;
 import com.lsp.baas.Util.CuidGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -25,6 +27,7 @@ public class CustomerServiceImpl implements ICustomerService {
     private final ICustomerRepository repository;
     private final CustomerMapper mapper;
     private final CuidGenerator cuidGenerator;
+    private final JsonMapper jsonMapper;
 
     @Override
     @Transactional
@@ -44,22 +47,28 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public List<CustomerResponse> findAll() {
-        return repository.findAll().stream().map(mapper::toResponse).toList();
-    }
-
-    @Override
     public Page<CustomerResponse> findAllPage(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable).map(mapper::toResponse);
     }
 
     @Override
-    public Slice<CustomerResponse> findAllSlice(Pageable pageable) {
-        return null;
+    public Optional<CustomerResponse> findByCuid(String cuid) {
+        return repository.findByCuid(cuid).map(mapper::toResponse);
     }
 
     @Override
-    public Optional<CustomerResponse> findById(Long id) {
-        return Optional.empty();
+    @Transactional
+    public CustomerResponse update(CustomerUpdate customerUpdate, String cuid) {
+        Customer customerBd = repository.findByCuid(cuid).orElseThrow(() -> new ResourceNotFoundException.CustomerNotFoundException(cuid));
+        mapper.updateEntityFromPatch(customerUpdate, customerBd);
+        return mapper.toResponse(repository.save(customerBd));
+    }
+
+    @Override
+    @Transactional
+    public CustomerResponse disable(String cuid) {
+        Customer customerBd = repository.findByCuid(cuid).orElseThrow(() -> new ResourceNotFoundException.CustomerNotFoundException(cuid));
+        customerBd.setIsEnabled(false);
+        return mapper.toResponse(repository.save(customerBd));
     }
 }

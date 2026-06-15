@@ -4,6 +4,7 @@ import com.lsp.baas.Controller.ResponseDto.Meta;
 import com.lsp.baas.Controller.ResponseDto.SuccessResponse;
 import com.lsp.baas.Controller.ResponseDto.SuccessResponsePage;
 import com.lsp.baas.Exception.ResourceNotFoundException;
+import com.lsp.baas.Service.Dto.AccountResponse;
 import com.lsp.baas.Service.Dto.CustomerUpdate;
 import com.lsp.baas.Service.ICustomerService;
 import com.lsp.baas.Service.Dto.CustomerCreate;
@@ -30,8 +31,15 @@ public class CustomerController {
     private String SIZE_PAGE;
 
     @PostMapping()
-    public ResponseEntity<CustomerResponse> save(@Valid @RequestBody CustomerCreate customerCreateDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(customerCreateDto));
+    public ResponseEntity<SuccessResponse<CustomerResponse>> save(@Valid @RequestBody CustomerCreate customerCreate){
+        CustomerResponse customerResponse = service.save(customerCreate);
+        SuccessResponse<CustomerResponse> successResponse = new SuccessResponse<>(
+                true,
+                HttpStatus.CREATED.value(),
+                "Operation completed successfully.",
+                customerResponse
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
     }
 
     @GetMapping()
@@ -81,11 +89,25 @@ public class CustomerController {
         return ResponseEntity.ok(successResponse);
     }
 
-    @PutMapping("/{cuid}")
+    @PutMapping("/disable/{cuid}")
     public ResponseEntity<SuccessResponse<CustomerResponse>> disable(
             @PathVariable String cuid
     ){
         CustomerResponse customerResponse = service.disable(cuid);
+        SuccessResponse<CustomerResponse> successResponse = new SuccessResponse<>(
+                true,
+                HttpStatus.OK.value(),
+                "Operation Completed Succesfully.",
+                customerResponse
+        );
+        return ResponseEntity.ok(successResponse);
+    }
+
+    @PutMapping("/enable/{cuid}")
+    public ResponseEntity<SuccessResponse<CustomerResponse>> enable(
+            @PathVariable String cuid
+    ){
+        CustomerResponse customerResponse = service.enable(cuid);
         SuccessResponse<CustomerResponse> successResponse = new SuccessResponse<>(
                 true,
                 HttpStatus.OK.value(),

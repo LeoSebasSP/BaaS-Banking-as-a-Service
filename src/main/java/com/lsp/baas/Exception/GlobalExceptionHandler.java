@@ -54,7 +54,6 @@ public class GlobalExceptionHandler {
             ResourceNotFoundException ex,
             HttpServletRequest request
     ) {
-        System.out.println(ex.getMessage());
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.NOT_FOUND,
                 ex.getMessage()
@@ -65,6 +64,23 @@ public class GlobalExceptionHandler {
         problemDetail.setInstance(URI.create(request.getRequestURI()));
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
+    }
+
+    @ExceptionHandler(ResourceDisabledException.class)
+    public ResponseEntity<ProblemDetail> handleResourceDisabledExceptions(
+            ResourceDisabledException ex,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_CONTENT,
+                ex.getMessage()
+        );
+
+        problemDetail.setType(URI.create("about:blank"));
+        problemDetail.setTitle("Resource Disabled");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(problemDetail);
     }
 }
 

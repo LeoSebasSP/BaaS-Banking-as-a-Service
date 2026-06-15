@@ -77,7 +77,7 @@ public class Transaction {
     private TransactionType transactionType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 50)
     private TransactionStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -100,7 +100,7 @@ public class Transaction {
     @Column(name = "external_provider_id", length = 100)
     private String externalProviderId;
 
-    @Column(name = "description", length = 225)
+    @Column(name = "description", length = 300)
     private String description;
 
     @Column(name = "created_at", nullable = false)

@@ -5,9 +5,7 @@ import com.lsp.baas.Service.Dto.CustomerResponse;
 import com.lsp.baas.Service.Dto.CustomerUpdate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ICustomerService{
@@ -21,4 +19,5 @@ public interface ICustomerService{
     CustomerResponse update(CustomerUpdate customerUpdate, String cuid);
 
     CustomerResponse disable(String cuid);
+    CustomerResponse enable(String cuid);
 }

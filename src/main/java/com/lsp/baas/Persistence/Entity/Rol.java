@@ -25,7 +25,10 @@ public class Rol {
     @ElementCollection(targetClass = Permission.class, fetch = FetchType.EAGER)
     @CollectionTable(
             name = "roles_permissions",
-            joinColumns = @JoinColumn(name = "rol_id"),
+            joinColumns = @JoinColumn(name = "rol_id", foreignKey = @ForeignKey(
+                    name = "fk_rolesPermissions_roles",
+                    options = "ON DELETE RESTRICT"
+            )),
             uniqueConstraints = @UniqueConstraint(
                     name = "uk_rol_permission",
                     columnNames = {"rol_id", "permission"}

@@ -45,7 +45,7 @@ public class Affiliation {
     private String clientSecret;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "service", nullable = false)
+    @Column(name = "service", nullable = false, length = 50)
     private ServiceModule serviceModule;
 
     @Column(name = "is_enabled", nullable = false)

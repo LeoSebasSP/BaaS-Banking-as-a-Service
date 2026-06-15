@@ -3,21 +3,19 @@ package com.lsp.baas.Service.Impl;
 import com.lsp.baas.Exception.ResourceNotFoundException;
 import com.lsp.baas.Persistence.Entity.Customer;
 import com.lsp.baas.Persistence.Repository.ICustomerRepository;
-import com.lsp.baas.Service.Dto.CustomerUpdate;
-import com.lsp.baas.Service.ICustomerService;
 import com.lsp.baas.Service.Dto.CustomerCreate;
 import com.lsp.baas.Service.Dto.CustomerResponse;
+import com.lsp.baas.Service.Dto.CustomerUpdate;
 import com.lsp.baas.Service.Dto.Mapper.CustomerMapper;
+import com.lsp.baas.Service.ICustomerService;
 import com.lsp.baas.Util.CuidGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +25,6 @@ public class CustomerServiceImpl implements ICustomerService {
     private final ICustomerRepository repository;
     private final CustomerMapper mapper;
     private final CuidGenerator cuidGenerator;
-    private final JsonMapper jsonMapper;
 
     @Override
     @Transactional
@@ -69,6 +66,14 @@ public class CustomerServiceImpl implements ICustomerService {
     public CustomerResponse disable(String cuid) {
         Customer customerBd = repository.findByCuid(cuid).orElseThrow(() -> new ResourceNotFoundException.CustomerNotFoundException(cuid));
         customerBd.setIsEnabled(false);
+        return mapper.toResponse(repository.save(customerBd));
+    }
+
+    @Override
+    @Transactional
+    public CustomerResponse enable(String cuid) {
+        Customer customerBd = repository.findByCuid(cuid).orElseThrow(() -> new ResourceNotFoundException.CustomerNotFoundException(cuid));
+        customerBd.setIsEnabled(true);
         return mapper.toResponse(repository.save(customerBd));
     }
 }
